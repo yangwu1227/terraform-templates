@@ -1,4 +1,3 @@
-# Variables with default values
 variable "region" {
   type        = string
   description = "AWS region where resources will be deployed"
