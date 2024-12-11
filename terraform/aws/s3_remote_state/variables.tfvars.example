@@ -1,0 +1,8 @@
+region                        = "us-east-1"
+profile                       = "default"
+s3_remote_state_bucket        = "s3-bucket-name"
+dynamodb_table_name           = "terraform_remote_state_lock"
+dynamodb_table_billing_mode   = "PROVISIONED"
+dynamodb_table_hash_key       = "LockID"
+dynamodb_table_read_capacity  = 1
+dynamodb_table_write_capacity = 1
