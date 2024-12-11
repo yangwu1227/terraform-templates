@@ -6,7 +6,7 @@ variable "region" {
 
 variable "profile" {
   type        = string
-  description = "AWS configuration profile with AdministratorAccess permissions"
+  description = "AWS configuration profile with all required permissions"
 }
 
 variable "project_prefix" {
@@ -15,13 +15,13 @@ variable "project_prefix" {
 }
 
 variable "create_github_oidc_provider" {
-  description = "Boolean to decide whether to create the OIDC provider or use an existing one."
   type        = bool
+  description = "Boolean to decide whether to create the OIDC provider or use an existing one"
 }
 
 variable "existing_oidc_provider_arn" {
   type        = string
-  description = "Amazon Resource Name (ARN) of the GitHub OIDC provider for authentication"
+  description = "Amazon resource name (ARN) of the GitHub OIDC provider for authentication"
 }
 
 variable "github_username" {
