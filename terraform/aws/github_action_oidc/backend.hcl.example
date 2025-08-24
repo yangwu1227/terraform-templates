@@ -1,4 +1,5 @@
-bucket  = "s3-bucket-name"
-key     = "s3/key/path/to/state"
-region  = "us-east-1"
-profile = "default"
+bucket       = "s3-bucket-name"
+key          = "s3/key/path/to/state"
+region       = "us-east-1"
+profile      = "default"
+use_lockfile = true
