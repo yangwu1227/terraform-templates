@@ -30,5 +30,5 @@ nav:
     - Github Action OIDC: aws/github_action_oidc.md
     - S3 Remote State: aws/s3_remote_state.md
     - Optuna SageMaker: aws/optuna_sagemaker.md
-    - Sagemaker: aws/sagemaker.md
+    - Sagemaker Notebook: aws/sagemaker_notebook.md
     - Cross-Platform Terraform Lockfile: aws/terraform_lockfile_cross_platform.md
