@@ -20,21 +20,6 @@ variable "vpc_cidr" {
   type        = string
 }
 
-variable "public_subnet_cidrs" {
-  description = "The CIDR blocks for public subnets"
-  type        = list(string)
-}
-
-variable "private_subnet_cidrs" {
-  description = "The CIDR blocks for private subnets"
-  type        = list(string)
-}
-
-variable "availability_zones" {
-  description = "List of availability zones to use"
-  type        = list(string)
-}
-
 # Sagemaker
 variable "sagemaker_instance_type" {
   description = "The instance type for the SageMaker notebook"
@@ -52,11 +37,6 @@ variable "sagemaker_maximum_ebs_volume_size_in_gb" {
 }
 
 # Git
-variable "git_repo_url" {
-  description = "The URL of the Git repository"
-  type        = string
-}
-
 variable "git_username" {
   description = "The username for the Git repository"
   type        = string

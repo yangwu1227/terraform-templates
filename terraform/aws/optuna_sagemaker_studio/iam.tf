@@ -31,7 +31,6 @@ resource "aws_iam_policy" "s3_policy" {
   })
 }
 
-# See https://docs.aws.amazon.com/sagemaker/latest/dg/remote-access-remote-setup.html#remote-access-remote-setup-method-3-ssh-terminal-permissions
 resource "aws_iam_policy" "remote_access_policy" {
   name = "${var.project_prefix}_remote_access_policy"
   policy = jsonencode({

@@ -10,7 +10,7 @@ locals {
   vpc_cidr = var.vpc_cidr
   azs      = slice(data.aws_availability_zones.available.names, 0, 2)
 
-  # Generate CIDR blocks for public subnets
+  # Example result: {"0" => {cidr = "10.0.1.0/24", az = "us-east-1a"}, "1" => {cidr = "10.0.2.0/24", az = "us-east-1b"}}
   public_subnets = {
     for i, az in local.azs : tostring(i) => {
       cidr_block        = cidrsubnet(local.vpc_cidr, 8, i)
@@ -36,8 +36,7 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name    = "${var.project_prefix}-igw"
-    project = var.project_prefix
+    Name = "${var.project_prefix}-igw"
   }
 }
 
@@ -51,8 +50,7 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name    = "${var.project_prefix}-public-${each.key}"
-    project = var.project_prefix
+    Name = "${var.project_prefix}-public-${each.key}"
   }
 }
 
@@ -66,8 +64,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name    = "${var.project_prefix}-public-rt"
-    project = var.project_prefix
+    Name = "${var.project_prefix}-public-rt"
   }
 }
 

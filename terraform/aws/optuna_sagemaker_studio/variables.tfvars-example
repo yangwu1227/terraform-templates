@@ -4,24 +4,21 @@ profile        = "default"
 project_prefix = "project_prefix"
 
 # VPC variables
-vpc_cidr             = "10.0.0.0/16"
-public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
-private_subnet_cidrs = ["10.0.3.0/24", "10.0.4.0/24"]
-availability_zones   = ["us-east-1a", "us-east-1b"]
+vpc_cidr = "10.0.0.0/16"
 
 # Sagemaker
 sagemaker_instance_type                 = "ml.t3.xlarge"
 sagemaker_default_ebs_volume_size_in_gb = 10
-sagemaker_maximum_ebs_volume_size_in_gb = 100
+sagemaker_maximum_ebs_volume_size_in_gb = 248
 
 # Git
 git_username = "github_username"
-git_pat      = "examples_classic_github_personal_access_token"
+git_pat      = "classic_github_personal_access_token"
 
 # ECR and S3 variables
 s3_bucket                  = "s3-bucket-name"
-retained_image_count       = 3
-untagged_image_expiry_days = 1
+retained_image_count       = 5
+untagged_image_expiry_days = 14
 
 # RDS variables
 database_name                     = "optuna"
@@ -32,4 +29,4 @@ db_instance_type                  = "db.t4g.medium"
 db_cluster_parameter_group_family = "aurora-mysql8.0"
 
 # Remote state 
-s3_bucket_remote_state = "s3-remote-state-bucket"
+s3_bucket_remote_state = "tf-cf-templates"

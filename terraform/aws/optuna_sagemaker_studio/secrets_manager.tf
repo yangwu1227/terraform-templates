@@ -9,7 +9,7 @@ resource "random_string" "secret_suffix" {
 # Git personal access token for connecting to private repositories
 resource "aws_secretsmanager_secret" "git_pat" {
   name        = "${var.project_prefix}_git_pat_${random_string.secret_suffix.result}"
-  description = "GitHub (classic) personal access token for SageMaker"
+  description = "GitHub (classic) personal access token for cloning private repositories"
   tags = {
     Name = "${var.project_prefix}_git_pat"
   }

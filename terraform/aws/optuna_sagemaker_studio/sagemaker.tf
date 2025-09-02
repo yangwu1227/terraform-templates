@@ -16,17 +16,23 @@ resource "aws_sagemaker_domain" "sagemaker_domain" {
   default_space_settings {
     execution_role  = aws_iam_role.sagemaker_execution_role.arn
     security_groups = [aws_security_group.sagemaker_sg.id]
-
   }
 
   default_user_settings {
     auto_mount_home_efs = "Enabled" # Inconsistent title case
     execution_role      = aws_iam_role.sagemaker_execution_role.arn
     security_groups     = [aws_security_group.sagemaker_sg.id]
+
+    code_editor_app_settings {
+      default_resource_spec {
+        instance_type        = var.sagemaker_instance_type
+        lifecycle_config_arn = aws_sagemaker_studio_lifecycle_config.code_editor.arn
+      }
+      lifecycle_config_arns = [aws_sagemaker_studio_lifecycle_config.code_editor.arn]
+    }
   }
   tags = {
-    project  = var.project_prefix
-    resource = "sagemaker_domain"
+    Name = "${var.project_prefix}_sagemaker_domain"
   }
 }
 
@@ -56,8 +62,7 @@ resource "aws_sagemaker_user_profile" "sagemaker_user_profile" {
   }
 
   tags = {
-    project  = var.project_prefix
-    resource = "sagemaker_user_profile"
+    Name = "${var.project_prefix}_sagemaker_user_profile"
   }
 }
 
@@ -66,9 +71,25 @@ resource "aws_sagemaker_space" "sagemaker_space" {
   domain_id  = aws_sagemaker_domain.sagemaker_domain.id
   space_name = "${replace(var.project_prefix, "_", "-")}-space"
 
+  ownership_settings {
+    owner_user_profile_name = aws_sagemaker_user_profile.sagemaker_user_profile.user_profile_name
+  }
+
+  space_sharing_settings {
+    sharing_type = "Private"
+  }
+
+  space_settings {
+    code_editor_app_settings {
+      default_resource_spec {
+        instance_type        = var.sagemaker_instance_type
+        lifecycle_config_arn = aws_sagemaker_studio_lifecycle_config.code_editor.arn
+      }
+    }
+  }
+
   tags = {
-    project  = var.project_prefix
-    resource = "sagemaker_space"
+    Name = "${var.project_prefix}_sagemaker_space"
   }
 }
 
@@ -79,7 +100,6 @@ resource "aws_sagemaker_studio_lifecycle_config" "code_editor" {
   studio_lifecycle_config_content  = filebase64("${path.module}/lifecycle_scripts/setup_coder_editor.sh")
 
   tags = {
-    project  = var.project_prefix
-    resource = "sagemaker_studio_code_editor_lifecycle_config"
+    Name = "${var.project_prefix}_code_editor_lifecycle_config"
   }
 }
