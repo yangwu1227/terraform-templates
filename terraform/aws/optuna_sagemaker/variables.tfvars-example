@@ -10,11 +10,11 @@ private_subnet_cidrs = ["10.0.3.0/24", "10.0.4.0/24"]
 availability_zones   = ["us-east-1a", "us-east-1b"]
 
 # Sagemaker
-sagemaker_instance_type = "ml.t3.xlarge"
-sagemaker_volume_size   = 30
+sagemaker_instance_type                 = "ml.t3.xlarge"
+sagemaker_default_ebs_volume_size_in_gb = 10
+sagemaker_maximum_ebs_volume_size_in_gb = 100
 
 # Git
-git_repo_url = "https://github.com/github_username/repo_name.git"
 git_username = "github_username"
 git_pat      = "examples_classic_github_personal_access_token"
 
