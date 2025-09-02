@@ -29,4 +29,4 @@ db_instance_type                  = "db.t4g.medium"
 db_cluster_parameter_group_family = "aurora-mysql8.0"
 
 # Remote state 
-s3_bucket_remote_state = "tf-cf-templates"
+s3_bucket_remote_state = "terraform-remote-state-bucket"

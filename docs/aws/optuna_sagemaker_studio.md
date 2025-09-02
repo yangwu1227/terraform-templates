@@ -1,24 +1,33 @@
-# SageMaker Studio
+# Optuna with SageMaker Studio
 
-> As of 2025, the [project](https://github.com/aws-samples/amazon-sagemaker-codeserver) behind setting up [code-server](https://github.com/coder/code-server) is effectively archived (last release was 2023). For a more modern setup with active development, see the setup for [Sagemaker Studio](https://docs.aws.amazon.com/sagemaker/latest/dg/studio-updated.html).
+Sets up an environment for running hyperparameter optimization (HPO) with [Optuna](https://github.com/optuna/optuna) on Amazon SageMaker Studio.
 
-This setup can be used for running a SageMaker Studio with a simple network infrastructure, security configurations, and minimal IAM. The configuration files provide the essential components needed to deploy a VPC, Sagemaker resources (e.g., domain, user profile, space, lifecycle configuration), S3 storage, and ECR repository for docker images.
+The configuration files and scripts are adapted from an [AWS blog post](https://aws.amazon.com/blogs/machine-learning/implementing-hyperparameter-optimization-with-optuna-on-amazon-sagemaker/) and its associated [GitHub repository](https://github.com/aws-samples/amazon-sagemaker-optuna-hpo-blog).
 
-> For a setup that integrates `optuna` for hyperparameter optimization, refer to the [Optuna SageMaker Studio](optuna_sagemaker_studio.md) documentation.
+Additionally, it incorporates lifecycle script for setting up `sagemaker-code-editor` in SageMaker Studio.
+
+## Overview
+
+<center>
+<img src="../diagrams/optuna_sagemaker.png" alt="Optuna with SageMaker" width="80%"/>
+</center>
 
 ```python
 ├── backend.hcl-example            # Example configuration for Terraform backend
-├── ecr.tf                         # Elastic Container Registry for custom Docker images
-├── iam.tf                         # IAM roles and policies for SageMaker Studio
-├── lifecycle_scripts              # Lifecycle scripts for configuring SageMaker Studio
-│   └── setup_coder_editor.sh      # Script to configure the code editor environment
+├── ecr.tf                         # Creates an Elastic Container Registry for Docker images used for training, preprocessing, or serving
+├── iam.tf                         # IAM roles and policies for SageMaker and related services
+├── lifecycle_scripts              # Lifecycle scripts for installing and configuring code-server
+│   ├── install_codeserver.sh      # Script to install code-server
+│   └── setup_codeserver.sh        # Script to configure code-server during startup
 ├── main.tf                        # Main Terraform configuration file
-├── s3.tf                          # S3 bucket configuration
-├── sagemaker.tf                   # SageMaker Studio configurations
-├── secrets_manager.tf             # Secrets Manager for sensitive information
-├── security_groups.tf             # Security groups for SageMaker Studio
+├── outputs.tf                     # Outputs for the Terraform module
+├── rds.tf                         # RDS configuration for databases
+├── s3.tf                          # S3 bucket configuration for storage
+├── sagemaker.tf                   # SageMaker configurations for running HPO
+├── secrets_manager.tf             # Secrets Manager for handling sensitive information
+├── security_groups.tf             # Security groups for network access
 ├── variables.tf                   # Variable definitions
-├── variables.tfvars-example       # Example variable values
+├── variables.tfvars-example       # Example of variable values
 └── vpc.tf                         # VPC configuration
 ```
 
@@ -58,23 +67,19 @@ This lifecycle script shows examples for the following:
 
 - **Provisioned Resources:**
 
-  - **VPC**: Defines a Virtual Private Cloud (VPC) for network isolation with DNS support enabled.
+  - **VPC**: Defines a Virtual Private Cloud (VPC) for network isolation.
 
-  - **Public Subnets**: Dynamically creates public subnets across two availability zones.
+  - **Subnets**: Creates public and private subnets for resource placement.
 
   - **Internet Gateway**: Enables internet access for public subnets.
 
-  - **Route Tables**: Configures routing for public subnets with default routes to the internet gateway.
+  - **NAT Gateways**: Provides internet access for private subnets.
 
-- **Key Design:**
-
-  - Uses dynamic subnet CIDR allocation based on the VPC CIDR block.
-
-  - Automatically selects availability zones with "opt-in-not-required" status.
+  - **Route Tables**: Manages routing within the VPC for public and private subnets.
 
 - **Dependencies:**
 
-  - Provides networking for SageMaker Studio and other resources.
+  - Other resources, such as RDS and SageMaker, rely on the VPC and its subnets for network configuration.
 
   - Security groups (from `security_groups.tf`) are tied to this VPC.
 
@@ -97,7 +102,20 @@ This lifecycle script shows examples for the following:
 > Note: As of 2025, code repository integration is only supported for JupyterLab and JupyterServer apps, not the Code Editor in SageMaker Studio. Additionally, private repositories are not yet supported. Therefore, this secret remains unused in the current configuration. Repository must be cloned manually using this secret if needed.
 
 - **Provisioned Resources:**
-  - **Secrets**: GitHub Personal Access Token for GitHub repository.
+
+  - **Secrets**: Manages sensitive data such as:
+
+    - GitHub Personal Access Token for SageMaker's code repository.
+
+    - RDS credentials for database access.
+
+  - **Random String/Password**: Generates unique identifiers and secure passwords.
+
+- **Dependencies:**
+
+  - Secrets are referenced by the SageMaker code repository (`sagemaker.tf`) and RDS cluster (`rds.tf`).
+
+  - RDS uses the credentials stored in Secrets Manager for secure access.
 
 ---
 
@@ -198,3 +216,25 @@ This lifecycle script shows examples for the following:
   - The IAM role in `iam.tf` grants SageMaker permission to pull images from this repository.
 
   - Used to store custom training, processing, or inference images.
+
+---
+
+### 8. **`rds.tf`**
+
+- **Provisioned Resources:**
+
+  - **Subnet Group**: Defines subnets where RDS instances are deployed.
+
+  - **Parameter Groups**: Configures database engine settings.
+
+  - **RDS Cluster**: Creates a database cluster for storing HPO results.
+
+  - **RDS Instances**: Adds instances to the database cluster for handling workloads.
+
+- **Dependencies:**
+
+  - Depends on private subnets from `vpc.tf` for deployment.
+
+  - Uses Secrets Manager credentials (`secrets_manager.tf`) for database access.
+
+  - The security group (`security_groups.tf`) controls access between SageMaker and RDS.
