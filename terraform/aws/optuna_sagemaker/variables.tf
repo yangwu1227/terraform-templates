@@ -41,8 +41,13 @@ variable "sagemaker_instance_type" {
   type        = string
 }
 
-variable "sagemaker_volume_size" {
-  description = "The size of the EBS volume, in gigabytes, attached to the SageMaker instance"
+variable "sagemaker_default_ebs_volume_size_in_gb" {
+  description = "The default size in GB of the EBS volume for SageMaker spaces"
+  type        = number
+}
+
+variable "sagemaker_maximum_ebs_volume_size_in_gb" {
+  description = "The maximum allowed size in GB of the EBS volume for SageMaker spaces"
   type        = number
 }
 

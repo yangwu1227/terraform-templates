@@ -31,10 +31,26 @@ resource "aws_iam_policy" "s3_policy" {
   })
 }
 
+# See https://docs.aws.amazon.com/sagemaker/latest/dg/remote-access-remote-setup.html#remote-access-remote-setup-method-3-ssh-terminal-permissions
+resource "aws_iam_policy" "remote_access_policy" {
+  name = "${var.project_prefix}_remote_access_policy"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action   = "sagemaker:StartSession"
+        Effect   = "Allow"
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 # Attach policies to the SageMaker execution role
 resource "aws_iam_role_policy_attachment" "policies_attachments" {
   for_each = {
     s3_policy                  = aws_iam_policy.s3_policy.arn
+    remote_access_policy       = aws_iam_policy.remote_access_policy.arn
     sagemaker_full_access      = "arn:aws:iam::aws:policy/AmazonSageMakerFullAccess"
     ecr_policy                 = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
     secrets_manager_read_wrtie = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
