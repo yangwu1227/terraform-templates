@@ -1,7 +1,5 @@
 # SageMaker Studio
 
-> As of 2025, the [project](https://github.com/aws-samples/amazon-sagemaker-codeserver) behind setting up [code-server](https://github.com/coder/code-server) is effectively archived (last release was 2023). For a more modern setup with active development, see the setup for [Sagemaker Studio](https://docs.aws.amazon.com/sagemaker/latest/dg/studio-updated.html).
-
 This setup can be used for running SageMaker Studio with a simple network infrastructure, security configurations, and minimal IAM. The configuration files provide the essential components needed to deploy a VPC, core Sagemaker resources (e.g., domain, user profile, space, lifecycle configuration), S3 for storage, and ECR repository for docker images.
 
 > For a setup that integrates `optuna` for hyperparameter optimization, refer to the [Optuna SageMaker Studio](optuna_sagemaker_studio.md) documentation.
